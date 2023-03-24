@@ -4,6 +4,7 @@
 long long int arr[SIZE];
 long long int tree[SIZE * 4];
 
+// Tree set using arr
 long long int init(int start, int end, int idx) {
     if(start == end) {
         tree[idx] = arr[start];
@@ -13,8 +14,15 @@ long long int init(int start, int end, int idx) {
     int mid = (start + end) / 2;
     tree[idx] = init(start, mid, idx * 2) + init(mid + 1, end, idx * 2 + 1);
     return tree[idx];
+    /*
+        void init()
+        -> init(start, mid, idx * 2); 
+        -> init(mid + 1, end, idx * 2 + 1);
+        -> tree[idx] = tree[idx * 2] + tree[idx * 2 + 1];
+    */
 }
 
+// Get the total sum from left to right
 long long int interval_sum(int start, int end, int idx, int left, int right) {
     if(end < left || right < start) return 0;
     if(left <= start && end <= right) return tree[idx];
@@ -23,6 +31,7 @@ long long int interval_sum(int start, int end, int idx, int left, int right) {
     return interval_sum(start, mid, idx * 2, left, right) + interval_sum(mid + 1, end, idx * 2 + 1, left, right);
 }
 
+// Update the value in ( what )
 void update(int start, int end, int idx, int what, int value) {
     if(what < start || what > end) return;
     if(start == end) {
@@ -31,8 +40,12 @@ void update(int start, int end, int idx, int what, int value) {
     }
 
     int mid = (start + end) / 2;
+
+    // First : Update child node
     update(start, mid, idx * 2, what, value);
     update(mid + 1, end, idx * 2 + 1, what, value);
+
+    // Second : Update now node
     tree[idx] = tree[idx * 2] + tree[idx * 2 + 1];
 }
 
@@ -45,6 +58,7 @@ int main(void) {
 
     init(0, n - 1, 1);
 
+    // Query
     int q;
     scanf("%d", &q);
 
